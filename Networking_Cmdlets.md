@@ -39,9 +39,9 @@ Below is a structured breakdown of each major cmdlet.
 
 ## IP Configuration
 
-XPowerShell  
+```PowerShell  
 ipconfig  
-X
+```
 
 Displays a concise summary of active interfaces, including IPv4, subnet mask, and the default gateway. Ideal for quick health checks or verifying whether a host is participating on the network as expected.
 
@@ -54,9 +54,9 @@ Displays a concise summary of active interfaces, including IPv4, subnet mask, an
 
 ## Full Adapter Details
 
-XPowerShell  
+```PowerShell  
 ipconfig /all  
-X
+```
 
 Provides the full interface profile: MAC address, DHCP lease, DNS servers, adapter state, and every parameter pulled from the network.  
 This is where DHCP and DNS issues normally reveal themselves.
@@ -70,9 +70,9 @@ This is where DHCP and DNS issues normally reveal themselves.
 
 ## Connectivity Tests
 
-XPowerShell  
+```PowerShell  
 ping 8.8.8.8  
-X
+```
 
 Sends ICMP echo requests to measure latency and confirm whether packets are making it past the local network.
 
@@ -82,9 +82,9 @@ Sends ICMP echo requests to measure latency and confirm whether packets are maki
 
 ## Route Tracing
 
-XPowerShell  
+```PowerShell  
 tracert 8.8.8.8  
-X
+```
 
 Shows the sequence of hops between the host and destination. Useful for routing loops, dropped hops, or asymmetric paths.
 
@@ -94,9 +94,9 @@ Shows the sequence of hops between the host and destination. Useful for routing 
 
 ## ARP Table
 
-XPowerShell  
+```PowerShell  
 arp -a  
-X
+```
 
 Retrieves ARP cache entries, mapping IPv4 → MAC addresses discovered on the LAN.
 
@@ -114,10 +114,10 @@ This section highlights a real-world troubleshooting scenario where DHCP operati
 
 Attempting to refresh the VM’s network configuration yielded the same error for both release and renew:
 
-XPowerShell  
+```PowerShell  
 ipconfig /release  
 ipconfig /renew  
-X
+```
 
 **“The operation failed as no adapter is in the state permissible for this operation.”**
 
@@ -163,11 +163,11 @@ This changed everything.
 
 ### Release now worked:
 
-<img width="521" height="186" alt="ipconfig release FIXED" src="https://github.com/user-attachments/assets/704cc8b4-7f26-439f-84f6-d84e91a6a2ad" />
+<img width="521" height="186" alt="ipconfig release FI```ED" src="https://github.com/user-attachments/assets/704cc8b4-7f26-439f-84f6-d84e91a6a2ad" />
 
 ### Renew successfully pulled a fresh 192.168.x.x address:
 
-<img width="521" height="209" alt="ipconfig renew FIXED" src="https://github.com/user-attachments/assets/ee33e651-63eb-4043-9f63-643873ca0764" />
+<img width="521" height="209" alt="ipconfig renew FI```ED" src="https://github.com/user-attachments/assets/ee33e651-63eb-4043-9f63-643873ca0764" />
 
 > **Key Point:**  
 > Virtualization layers matter. NAT mode acts like protective glass—great for isolation, terrible for testing real DHCP behavior.
@@ -178,9 +178,9 @@ This changed everything.
 
 ## MAC Address Identification
 
-XPowerShell  
+```PowerShell  
 getmac  
-X
+```
 
 Grabs the system’s physical MAC addresses.
 
@@ -190,9 +190,9 @@ Grabs the system’s physical MAC addresses.
 
 ## DNS Query
 
-XPowerShell  
+```PowerShell  
 nslookup google.com  
-X
+```
 
 Confirms active DNS resolver and shows name resolution behavior.
 
@@ -208,9 +208,9 @@ Ubuntu provides parallel tools for inspecting and validating network configurati
 
 ## Interface Listing
 
-XBash  
+```Bash  
 ifconfig  
-X
+```
 
 Displays interfaces, MAC addresses, IPv4 config, and link state.
 
@@ -220,9 +220,9 @@ Displays interfaces, MAC addresses, IPv4 config, and link state.
 
 ## Connectivity Tests (Linux)
 
-XBash  
+```Bash  
 ping -c 4 8.8.8.8  
-X
+```
 
 <img width="661" height="227" alt="ubuntu ping" src="https://github.com/user-attachments/assets/b52f8124-6cff-4f57-bcbe-c1cbc6cfecd8" />
 
@@ -230,9 +230,9 @@ X
 
 ## Route Tracing (Linux)
 
-XBash  
+```Bash  
 traceroute 8.8.8.8  
-X
+```
 
 <img width="673" height="732" alt="ubuntu traceroute" src="httpsgithubusercontent/assets/9850b1e5-ee60-4a69-b820-3fe95db9a974" />
 
@@ -240,9 +240,9 @@ X
 
 ## ARP Table (Linux)
 
-XBash  
+```Bash  
 arp -a  
-X
+```
 
 <img width="586" height="50" alt="ubuntu arp" src="https://github.com/user-attachments/assets/9ea33134-118f-4497-b455-fa7fee71a89f" />
 
@@ -252,9 +252,9 @@ X
 
 ## MAC Address (ip link)
 
-XBash  
+```Bash  
 ip link  
-X
+```
 
 <img width="1152" height="146" alt="ubuntu ip link" src="https://github.com/user-attachments/assets/a21fc817-5c78-40f2-aab7-dd7cf41d075b" />
 
@@ -262,9 +262,9 @@ X
 
 ## IP Address (ip addr show)
 
-XBash  
+```Bash  
 ip addr show  
-X
+```
 
 <img width="1019" height="432" alt="ubuntu ip addr show" src="https://githubgithubusercontent/assets/5bb1c38f-0ced-4fff-80f4-e3aaf06583ec" />
 
@@ -280,9 +280,9 @@ NetworkManager reveals DHCP-provided metadata including lease times, DNS, gatewa
 
 ## DHCP Client Request (dhclient)
 
-XBash  
+```Bash  
 sudo dhclient -v  
-X
+```
 
 [Insert Screenshot – dhclient]
 
