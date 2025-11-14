@@ -72,22 +72,31 @@ DNS Server Query
 Explanation of the ARP Table  
 The ARP table stores IPv4-to-MAC address mappings that allow communication on the local network. Windows dynamically updates these entries as devices are discovered. The table enables Layer 3 to Layer 2 translation so that Ethernet frames can be delivered to the correct physical device.
 
+---
   
-**Ubuntu Linux Networking – Command Usage and Analysis**
+## Ubuntu Linux Networking – Command Usage and Analysis
 
-XifconfigX  
+```Bash
+ifconfig
+```  
 Displays interface information such as IPv4 address, broadcast address, netmask, and MAC address.  
 [Screenshot – ifconfig]
 
-Xping -c 4 8.8.8.8X  
+```Bash
+ping -c 4 8.8.8.8
+```
 Tests connectivity to an external host with a fixed number of ICMP requests.  
 [Screenshot – ping (Ubuntu)]
 
-Xtraceroute 8.8.8.8X  
+```Bash
+traceroute 8.8.8.8
+```  
 Shows the path each packet takes across intermediary routers to reach the destination.  
 [Screenshot – traceroute]
 
-Xarp -aX  
+```Bash
+arp -a
+```
 Shows IP-to-MAC address mappings known by the local Linux system.  
 [Screenshot – arp (Ubuntu)]
 
@@ -95,15 +104,15 @@ Shows IP-to-MAC address mappings known by the local Linux system.
 **Ubuntu – Additional Networking Tasks**
 
 MAC Address  
-Identified using Xip linkX.  
+Identified using ```ip link```.  
 [Screenshot – ip link]
 
 IP Address  
-Identified using Xip addr showX.  
+Identified using ```ip addr show```.  
 [Screenshot – ip addr show]
 
 ARP Table Mapping  
-Displayed using Xarp -aX.  
+Displayed using ```arp -a```.  
 [Screenshot – arp]
 
 DHCP Verification  
@@ -155,5 +164,4 @@ DHCP uses a four-step sequence:
 • Acknowledge – The server approves the lease and provides configuration  
 [Screenshot – DHCP client request]
 
-  
-End of Document
+
