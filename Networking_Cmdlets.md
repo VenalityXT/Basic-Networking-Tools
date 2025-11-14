@@ -149,7 +149,7 @@ arp -a
 
 ARP maps IPv4 addresses to MAC addresses on the **local network**.
 
-<img width="435" height="178" alt="arp" src="httpsgithubusercontent/assets/f2231518-fffd-42ae-8886-c2cb8dec9e87" />
+<img width="435" height="178" alt="arp" src="https://github.com/user-attachments/assets/93334ba8-8710-4c1b-8f81-0c7e0e827f92" />
 
 ### How to interpret ARP entries:
 | Column | Meaning |
@@ -189,11 +189,11 @@ produced the same message both times:
 
 Release attempt:
 
-<img width="539" height="113" alt="ipconfig release" src="httpsgithubusercontent/assets/65d1c3bd-81e6-4871-ba94-9518480f7d87" />
+<img width="539" height="113" alt="ipconfig release" src="https://github.com/user-attachments/assets/9668e726-2b14-43e3-8b9d-bba7ddfc3e27" />
 
 Renew attempt:
 
-<img width="541" height="110" alt="ipconfig renew" src="httpsgithubusercontent/assets/429c7ae6-919c-4594-adae-34fa28f007ee" />
+<img width="541" height="110" alt="ipconfig renew" src="https://github.com/user-attachments/assets/a15bcd84-321d-4ae4-947d-90991c8dd0bc" />
 
 This wasn’t Windows being difficult.  
 It simply didn’t *have* a DHCP lease to release or renew.
@@ -212,7 +212,7 @@ In NAT mode:
 
 Switching VirtualBox to **Bridged Adapter** puts the VM directly on the LAN, enabling real DHCP interaction.
 
-<img width="988" height="474" alt="fixing ipconfig release and renew commands" src="httpsgithubusercontent/assets/3eb4ca23-a7d3-42bd-b5a5-80640f551b7a" />
+<img width="988" height="474" alt="fixing ipconfig release and renew commands" src="https://github.com/user-attachments/assets/60505178-2f87-4ae2-92ae-cf08c41185fe" />
 
 After switching modes and restarting the VM, Windows Network Troubleshooter re-enabled DHCP client functionality on the Ethernet adapter.
 
@@ -227,11 +227,11 @@ After switching modes and restarting the VM, Windows Network Troubleshooter re-e
 
 Release now worked:
 
-<img width="521" height="186" alt="ipconfig release FI```ED" src="httpsgithubusercontent/assets/704cc8b4-7f26-439f-84f6-d84e91a6a2ad" />
+<img width="521" height="186" alt="ipconfig release FIXED" src="https://github.com/user-attachments/assets/592b4a19-cad5-4ce7-81a5-7fe4eb35a190" />
 
 Renew succeeded, acquiring a valid `192.168.x.x` lease:
 
-<img width="521" height="209" alt="ipconfig renew FI```ED" src="httpsgithubusercontent/assets/ee33e651-63eb-4043-9f63-643873ca0764" />
+<img width="521" height="209" alt="ipconfig renew FIXED" src="https://github.com/user-attachments/assets/620bddac-3fbd-4b82-baba-04014b9cd4df" />
 
 This sequence demonstrates:
 
@@ -252,7 +252,7 @@ Shows physical MAC addresses bound to Windows interfaces.
 getmac  
 ```
 
-<img width="636" height="103" alt="getmac" src="httpsgithubusercontent/assets/5a074a78-c05b-482d-8386-74092323aa2d" />
+<img width="636" height="103" alt="getmac" src="https://github.com/user-attachments/assets/a5d351d3-074d-4496-924b-624b8a4c5bc7" />
 
 Use cases:  
 - ARP validation  
@@ -268,7 +268,7 @@ Use cases:
 nslookup google.com  
 ```
 
-<img width="347" height="145" alt="nslookup" src="httpsgithubusercontent/assets/bcac0146-b7aa-4429-9f8b-dffbf730774a" />
+<img width="347" height="145" alt="nslookup" src="https://github.com/user-attachments/assets/c8972386-dc58-4e1f-bb7d-209858ec10fc" />
 
 ### What this confirms:
 - DNS server responding  
@@ -291,7 +291,7 @@ While Windows focuses on convenience, Linux surfaces the raw details of interfac
 ifconfig  
 ```
 
-<img width="859" height="629" alt="ubuntu ifconfig" src="httpsgithubusercontent/assets/c33bf531-7eaf-459a-a671-fa5fc6c0b0b4" />
+<img width="859" height="629" alt="ubuntu ifconfig" src="https://github.com/user-attachments/assets/0ded335b-0055-46c2-b4fa-62f7be68c5fb" />
 
 ### What we see:
 - Interface `ens33` is up  
@@ -307,7 +307,7 @@ ifconfig
 ping -c 4 8.8.8.8  
 ```
 
-<img width="661" height="227" alt="ubuntu ping" src="httpsgithubusercontent/assets/b52f8124-6cff-4f57-bcbe-c1cbc6cfecd8" />
+<img width="661" height="227" alt="ubuntu ping" src="https://github.com/user-attachments/assets/384398a3-345a-489e-8c2d-462878433a1b" />
 
 Linux pings show similar data:
 
@@ -323,7 +323,7 @@ Linux pings show similar data:
 traceroute 8.8.8.8  
 ```
 
-<img width="673" height="732" alt="ubuntu traceroute" src="httpsgithubusercontent/assets/9850b1e5-ee60-4a69-b820-3fe95db9a974" />
+<img width="673" height="732" alt="ubuntu traceroute" src="https://github.com/user-attachments/assets/9efaa038-0924-4030-8661-6adfbd4aa7fd" />
 
 Linux traceroute often uses UDP packets (unlike Windows using ICMP), so path differ slightly—but hop structure remains similar.
 
@@ -335,7 +335,7 @@ Linux traceroute often uses UDP packets (unlike Windows using ICMP), so path dif
 arp -a  
 ```
 
-<img width="586" height="50" alt="ubuntu arp" src="httpsgithubusercontent/assets/9ea33134-118f-4497-b455-fa7fee71a89f" />
+<img width="586" height="50" alt="ubuntu arp" src="https://github.com/user-attachments/assets/84739b30-c203-4d20-a3f4-5026c22a8ffb" />
 
 Same interpretation logic as Windows:
 
@@ -354,7 +354,7 @@ Same interpretation logic as Windows:
 ip link  
 ```
 
-<img width="1152" height="146" alt="ubuntu ip link" src="httpsgithubusercontent/assets/a21fc817-5c78-40f2-aab7-dd7cf41d075b" />
+<img width="1152" height="146" alt="ubuntu ip link" src="https://github.com/user-attachments/assets/25b05bf4-0522-410e-8250-7b9ac3fff7ff" />
 
 ---
 
@@ -364,13 +364,13 @@ ip link
 ip addr show  
 ```
 
-<img width="1019" height="432" alt="ubuntu ip addr show" src="httpsgithubusercontent/assets/5bb1c38f-0ced-4fff-80f4-e3aaf06583ec" />
+<img width="1019" height="432" alt="ubuntu ip addr show" src="https://github.com/user-attachments/assets/a9d57c03-f448-45d1-b17e-1c3a107113a3" />
 
 ---
 
 ## DHCP Verification (nmcli)
 
-<img width="912" height="923" alt="ubuntu nmcli device show" src="httpsgithubusercontent/assets/9033bfc6-f0c3-45bb-b764-3a3170273e69" />
+<img width="912" height="923" alt="ubuntu nmcli device show" src="https://github.com/user-attachments/assets/2d667bf5-1bb2-46fa-9022-e2a7464eea40" />
 
 This output reveals:
 
@@ -402,7 +402,7 @@ A quick overview of foundational Layer 1–3 hardware.
 
 ## Hub (Layer 1)
 
-<img src="httpsgithubusercontent/assets/9c50db83-cfbc-4a14-83c2-a11b9a5d13b8">
+<img width="824" height="608" alt="sprite-1-1" src="https://github.com/user-attachments/assets/cab409ef-fd0c-4970-980d-b32efb438e5d" />
 
 - Traffic is repeated to **all** ports  
 - No MAC learning  
@@ -413,7 +413,7 @@ A quick overview of foundational Layer 1–3 hardware.
 
 ## Switch (Layer 2)
 
-<img src="httpsgithubusercontent/assets/432c2fd3-098a-4616-b254-9c06390ad337">
+<img width="799" height="592" alt="sprite-SWITCH" src="https://github.com/user-attachments/assets/a3b7ebb0-04d5-4fb0-bfaa-9cec8dc17b6b" />
 
 - Learns MAC addresses  
 - Reduces collisions  
@@ -424,7 +424,7 @@ A quick overview of foundational Layer 1–3 hardware.
 
 ## Router (Layer 3)
 
-<img src="httpsgithubusercontent/assets/f80b6ad2-1c6b-44dd-87e7-411da775e897">
+<img width="524" height="653" alt="sprite-ROUTER" src="https://github.com/user-attachments/assets/69f44726-e63b-4105-9647-7e532339b2a9" />
 
 - Forwards traffic between networks  
 - Makes decisions based on IP addresses  
