@@ -1,225 +1,382 @@
 # Basic Networking Command List  
-Applied Networking Concepts – Windows and Ubuntu
+### Cross-Platform Analysis of Windows & Ubuntu Networking Tools
 
-This lab explores how operating systems expose networking functionality through command-line tools. By working inside isolated Windows and Ubuntu virtual machines, I used foundational cmdlets and utilities to analyze live network behavior, inspect interface configuration, validate DHCP and DNS operations, map ARP tables, and observe routing paths in action.  
+This document captures a structured, high-fidelity walkthrough of essential networking cmdlets and utilities across **Windows** and **Ubuntu Linux**. Each tool is demonstrated, contextualized, and interpreted with a focus on how real systems behave—both when everything works as intended, and when it absolutely does not.
 
-More importantly, this project demonstrates the practical skill of interpreting what the system is *doing* beneath the surface—how packets flow, where addresses come from, and how the OS responds when things go wrong. Issues encountered during testing, such as DHCP failures on Windows, were intentionally documented and resolved using built-in troubleshooting methods to reflect real troubleshooting workflow.
+While the commands themselves are foundational, the value lies in observing how the OS exposes its networking stack at Layers 1–4, how DHCP/DNS/ARP behave in practical environments, and how virtualization settings can quietly break everything behind the scenes.  
+This file is written not as a school exercise, but as a **technical resource** someone else could learn from.
 
 ---
 
-# Windows Networking – Command Usage and Analysis
+## Table of Contents
+- [Windows Networking Essentials](#windows-networking-essentials)
+  - [IP Configuration](#ip-configuration)
+  - [Full Adapter Details](#full-adapter-details)
+  - [Connectivity Tests](#connectivity-tests)
+  - [Route Tracing](#route-tracing)
+  - [ARP Table](#arp-table)
+- [DHCP Failure Case Study (ipconfig /release & /renew)](#dhcp-failure-case-study-ipconfig-release--renew)
+- [Additional Windows Networking Tasks](#additional-windows-networking-tasks)
+- [Ubuntu Networking Essentials](#ubuntu-networking-essentials)
+  - [Interface Listing](#interface-listing)
+  - [Connectivity Tests (Linux)](#connectivity-tests-linux)
+  - [Route Tracing (Linux)](#route-tracing-linux)
+  - [ARP Table (Linux)](#arp-table-linux)
+- [Additional Ubuntu Tasks](#additional-ubuntu-tasks)
+- [Networking Devices Overview](#networking-devices-overview)
+- [Networking Theory](#networking-theory)
+- [Real-World Applications](#real-world-applications)
 
-### IP Configuration (ipconfig)
-```PowerShell  
+---
+
+# Windows Networking Essentials
+
+Windows provides a collection of CLI utilities that surface real-time information from the TCP/IP stack. These commands make it possible to inspect addressing, routing, ARP behavior, DNS resolution, and DHCP operations—all without external tools.
+
+Below is a structured breakdown of each major cmdlet.
+
+---
+
+## IP Configuration
+
+XPowerShell  
 ipconfig  
-```  
+X
 
-This command delivers a concise snapshot of the system’s current network state—IPv4 address, subnet mask, and default gateway. It’s the fastest way to verify whether a host is configured correctly and actively connected.
+Displays a concise summary of active interfaces, including IPv4, subnet mask, and the default gateway. Ideal for quick health checks or verifying whether a host is participating on the network as expected.
 
 <img width="598" height="246" alt="ipconfig" src="https://github.com/user-attachments/assets/e535c7be-c7d2-41de-a285-2abe1f001998" />
 
-### Full Adapter Details (ipconfig /all)
-```PowerShell  
-ipconfig /all  
-```  
+> **Key Point:**  
+> `ipconfig` is the “first responder” of Windows networking commands—fast, simple, and tells you whether you even *have* a network before digging deeper.
 
-This expanded view includes everything the OS knows about each interface: MAC addresses, DHCP lease times, DNS servers, interface states, and extended network parameters. It’s the command you use when you need the *why* behind connectivity issues.
+---
+
+## Full Adapter Details
+
+XPowerShell  
+ipconfig /all  
+X
+
+Provides the full interface profile: MAC address, DHCP lease, DNS servers, adapter state, and every parameter pulled from the network.  
+This is where DHCP and DNS issues normally reveal themselves.
 
 <img width="684" height="480" alt="ipconfig all" src="https://github.com/user-attachments/assets/6eb174a9-530c-4329-b3f4-c293ae22ed33" />
 
-### Releasing and Renewing the DHCP Lease  
-```PowerShell  
-ipconfig /release  
-ipconfig /renew  
-```  
+> **Key Point:**  
+> `ipconfig /all` is effectively the “network resume” of your machine—everything the OS believes about its interfaces is here.
 
-When I attempted to refresh the VM’s network configuration by releasing and renewing the DHCP lease, Windows immediately pushed back with the same error for both commands:
+---
 
-**“The operation failed as no adapter is in the state permissible for this operation.”**
+## Connectivity Tests
 
-This showed up during the release attempt:
-
-<img width="539" height="113" alt="ipconfig release" src="https://github.com/user-attachments/assets/65d1c3bd-81e6-4871-ba94-9518480f7d87" />
-
-And the renew command failed in the exact same way:
-
-<img width="541" height="110" alt="ipconfig renew" src="https://github.com/user-attachments/assets/429c7ae6-919c-4594-adae-34fa28f007ee" />
-
-At first, it looked like a Windows-side issue; maybe a permissions problem or a disabled interface. But the error was actually pointing to something simplier: **the VM wasn’t connected to a real LAN segment where DHCP could operate.**  
-VirtualBox had the VM attached to a **NAT** interface, meaning the guest OS wasn’t handling DHCP on the network at all.
-
-Switching the VM’s network mode from NAT to **Bridged Adapter** allowed the VM to act like a real device on the local network, making DHCP functional again. After changing this setting and restarting the VM, the adapter finally entered a state where release/renew operations were valid.
-
-<img width="988" height="474" alt="fixing ipconfig release and renew commands" src="https://github.com/user-attachments/assets/3eb4ca23-a7d3-42bd-b5a5-80640f551b7a" />
-
-Once bridged mode was active, I ran the Windows Network Troubleshooter on the Ethernet interface. The diagnostic tool automatically re-enabled DHCP client functionality, finishing the fix and restoring normal network behavior.
-
-After that, `ipconfig /release` cleanly dropped the active lease:
-
-<img width="521" height="186" alt="ipconfig release FIXED" src="https://github.com/user-attachments/assets/704cc8b4-7f26-439f-84f6-d84e91a6a2ad" />
-
-And `ipconfig /renew` successfully acquired a fresh 192.168.x.x address from the router, complete with updated DNS and gateway information:
-
-<img width="521" height="209" alt="ipconfig renew FIXED" src="https://github.com/user-attachments/assets/ee33e651-63eb-4043-9f63-643873ca0764" />
-
-This troubleshooting sequence not only demonstrated the mechanics of DHCP on Windows, but also highlighted an important lesson: when dealing with virtual networks, host-level configuration (like NAT vs. Bridged mode) can directly control how the guest OS interacts with the real network. Once the VM was placed on an actual LAN segment and DHCP was repaired, the entire release/renew workflow behaved exactly as expected.
-
-### Connectivity Test (ping)
-```PowerShell  
+XPowerShell  
 ping 8.8.8.8  
-```  
+X
 
-ICMP echo requests provide a quick and reliable way to test reachability and latency. Pinging 8.8.8.8 (Google’s DNS server) is a standard troubleshooting step.
+Sends ICMP echo requests to measure latency and confirm whether packets are making it past the local network.
 
 <img width="458" height="212" alt="ping" src="https://github.com/user-attachments/assets/50c692d4-e3ef-44ca-8911-58de3fc166a3" />
 
-### Route Tracing (tracert)
-```PowerShell  
-tracert 8.8.8.8  
-```  
+---
 
-This command reveals each hop between the host and the destination, showing where delays or failures occur along the path.
+## Route Tracing
+
+XPowerShell  
+tracert 8.8.8.8  
+X
+
+Shows the sequence of hops between the host and destination. Useful for routing loops, dropped hops, or asymmetric paths.
 
 <img width="646" height="334" alt="tracert" src="https://github.com/user-attachments/assets/ca729c1f-93df-4637-a811-b8426ec68d3f" />
 
-### ARP Table Inspection (arp -a)
-```PowerShell  
-arp -a  
-```  
+---
 
-ARP translates IPv4 addresses into MAC addresses. Viewing this table shows which devices the system has communicated with on the local network.
+## ARP Table
+
+XPowerShell  
+arp -a  
+X
+
+Retrieves ARP cache entries, mapping IPv4 → MAC addresses discovered on the LAN.
 
 <img width="435" height="178" alt="arp" src="https://github.com/user-attachments/assets/f2231518-fffd-42ae-8886-c2cb8dec9e87" />
 
 ---
 
-# Windows – Additional Networking Tasks
+# DHCP Failure Case Study (ipconfig /release & /renew)
 
-### MAC Address Identification
-`getmac` retrieves the system’s physical MAC addresses—useful for ARP verification, filtering, inventory, or troubleshooting.
-
-<img width="636" height="103" alt="getmac" src="https://github.com/user-attachments/assets/5a074a78-c05b-482d-8386-74092323aa2d" />
-
-### DNS Query (nslookup)
-This verifies DNS server availability and confirms that domain resolution is working properly.
-
-<img width="347" height="145" alt="nslookup" src="https://github.com/user-attachments/assets/bcac0146-b7aa-4429-9f8b-dffbf730774a" />
-
-### ARP Table Explanation
-The ARP table maps IPv4 addresses to MAC addresses. Without it, local-network communication would not function. ARP dynamically updates based on broadcasts and replies, allowing the system to determine where to send Ethernet frames at Layer 2.
+This section highlights a real-world troubleshooting scenario where DHCP operations failed entirely—demonstrating not only how `ipconfig` works, but how virtualization and OS components interact.
 
 ---
 
-# Ubuntu Linux Networking – Command Usage and Analysis
+## Observing the Failure
 
-### Interface Listing (ifconfig)
-```Bash  
+Attempting to refresh the VM’s network configuration yielded the same error for both release and renew:
+
+XPowerShell  
+ipconfig /release  
+ipconfig /renew  
+X
+
+**“The operation failed as no adapter is in the state permissible for this operation.”**
+
+Release failure:
+
+<img width="539" height="113" alt="ipconfig release" src="https://github.com/user-attachments/assets/65d1c3bd-81e6-4871-ba94-9518480f7d87" />
+
+Renew failure:
+
+<img width="541" height="110" alt="ipconfig renew" src="https://github.com/user-attachments/assets/429c7ae6-919c-4594-adae-34fa28f007ee" />
+
+> **Key Point:**  
+> This was *not* a Windows permission issue. The OS was simply telling the truth:  
+> “You can’t renew a DHCP lease you don’t have.”
+
+---
+
+## Finding the Root Cause
+
+The real culprit wasn’t Windows—it was VirtualBox.
+
+The VM was still attached to a **NAT** network. In NAT mode, the hypervisor—not the guest OS—manages DHCP.  
+Meaning: the Windows VM had no DHCP relationship with the LAN at all.
+
+Once recognized, the fix was straightforward:
+
+### **1. Switch VirtualBox from NAT → Bridged Adapter**  
+This placed the VM on the physical LAN, allowing it to interact with the real DHCP server.
+
+### **2. Restart the VM**  
+Refreshing the virtual NIC state.
+
+### **3. Run Windows Network Troubleshooter**  
+The troubleshooter re-enabled the DHCP client on the Ethernet adapter.
+
+<img width="988" height="474" alt="fixing ipconfig release and renew commands" src="https://github.com/user-attachments/assets/3eb4ca23-a7d3-42bd-b5a5-80640f551b7a" />
+
+This changed everything.
+
+---
+
+## Validating the Fix
+
+### Release now worked:
+
+<img width="521" height="186" alt="ipconfig release FIXED" src="https://github.com/user-attachments/assets/704cc8b4-7f26-439f-84f6-d84e91a6a2ad" />
+
+### Renew successfully pulled a fresh 192.168.x.x address:
+
+<img width="521" height="209" alt="ipconfig renew FIXED" src="https://github.com/user-attachments/assets/ee33e651-63eb-4043-9f63-643873ca0764" />
+
+> **Key Point:**  
+> Virtualization layers matter. NAT mode acts like protective glass—great for isolation, terrible for testing real DHCP behavior.
+
+---
+
+# Additional Windows Networking Tasks
+
+## MAC Address Identification
+
+XPowerShell  
+getmac  
+X
+
+Grabs the system’s physical MAC addresses.
+
+<img width="636" height="103" alt="getmac" src="https://github.com/user-attachments/assets/5a074a78-c05b-482d-8386-74092323aa2d" />
+
+---
+
+## DNS Query
+
+XPowerShell  
+nslookup google.com  
+X
+
+Confirms active DNS resolver and shows name resolution behavior.
+
+<img width="347" height="145" alt="nslookup" src="https://github.com/user-attachments/assets/bcac0146-b7aa-4429-9f8b-dffbf730774a" />
+
+---
+
+# Ubuntu Networking Essentials
+
+Ubuntu provides parallel tools for inspecting and validating network configuration, but exposes more detail through the `ip` suite and NetworkManager.
+
+---
+
+## Interface Listing
+
+XBash  
 ifconfig  
-```  
+X
 
-Displays the system’s network interfaces, IPv4 configuration, and MAC addresses.
+Displays interfaces, MAC addresses, IPv4 config, and link state.
 
 <img width="859" height="629" alt="ubuntu ifconfig" src="https://github.com/user-attachments/assets/c33bf531-7eaf-459a-a671-fa5fc6c0b0b4" />
 
-### Connectivity Test (ping)
-```Bash  
-ping -c 4 8.8.8.8  
-```  
+---
 
-Sends four ICMP echo requests to verify basic network connectivity.
+## Connectivity Tests (Linux)
+
+XBash  
+ping -c 4 8.8.8.8  
+X
 
 <img width="661" height="227" alt="ubuntu ping" src="https://github.com/user-attachments/assets/b52f8124-6cff-4f57-bcbe-c1cbc6cfecd8" />
 
-### Route Tracing (traceroute)
-```Bash  
+---
+
+## Route Tracing (Linux)
+
+XBash  
 traceroute 8.8.8.8  
-```  
+X
 
-Shows the routers a packet passes through on its way to the target.
+<img width="673" height="732" alt="ubuntu traceroute" src="httpsgithubusercontent/assets/9850b1e5-ee60-4a69-b820-3fe95db9a974" />
 
-<img width="673" height="732" alt="ubuntu traceroute" src="https://github.com/user-attachments/assets/9850b1e5-ee60-4a69-b820-3fe95db9a974" />
+---
 
-### ARP Table (arp -a)
-```Bash  
+## ARP Table (Linux)
+
+XBash  
 arp -a  
-```  
-
-Displays the ARP mappings Linux has learned from local network communication.
+X
 
 <img width="586" height="50" alt="ubuntu arp" src="https://github.com/user-attachments/assets/9ea33134-118f-4497-b455-fa7fee71a89f" />
 
 ---
 
-# Ubuntu – Additional Networking Tasks
+# Additional Ubuntu Tasks
 
-### MAC Address (ip link)
-```Bash  
+## MAC Address (ip link)
+
+XBash  
 ip link  
-```  
+X
 
 <img width="1152" height="146" alt="ubuntu ip link" src="https://github.com/user-attachments/assets/a21fc817-5c78-40f2-aab7-dd7cf41d075b" />
 
-### IP Address (ip addr show)
-```Bash  
+---
+
+## IP Address (ip addr show)
+
+XBash  
 ip addr show  
-```  
+X
 
-<img width="1019" height="432" alt="ubuntu ip addr show" src="https://github.com/user-attachments/assets/5bb1c38f-0ced-4fff-80f4-e3aaf06583ec" />
+<img width="1019" height="432" alt="ubuntu ip addr show" src="https://githubgithubusercontent/assets/5bb1c38f-0ced-4fff-80f4-e3aaf06583ec" />
 
-### DHCP Verification (nmcli device show)
-Linux’s NetworkManager provides in-depth DHCP details including lease options, gateway, DNS, and addressing information.
+---
 
-<img width="912" height="923" alt="ubuntu nmcli device show" src="https://github.com/user-attachments/assets/9033bfc6-f0c3-45bb-b764-3a3170273e69" />
+## DHCP Verification (nmcli device show)
 
-### DHCP Client Request (dhclient)
-```Bash  
+NetworkManager reveals DHCP-provided metadata including lease times, DNS, gateway, and assigned IPv4 info.
+
+<img width="912" height="923" alt="ubuntu nmcli device show" src="https://githubusercontent/assets/9033bfc6-f0c3-45bb-b764-3a3170273e69" />
+
+---
+
+## DHCP Client Request (dhclient)
+
+XBash  
 sudo dhclient -v  
-```  
+X
 
 [Insert Screenshot – dhclient]
 
 ---
 
-# Networking Devices – Hub, Switch, Router
+# Networking Devices Overview
 
-### Hub
-A basic Layer 1 repeater. Hubs forward electrical signals to all ports, creating large collision domains. Simple but inefficient.
-
-<img width="800" height="450" alt="image" src="https://github.com/user-attachments/assets/9c50db83-cfbc-4a14-83c2-a11b9a5d13b8" />
-
-### Switch
-Operates at Layer 2. Maintains a MAC address table to intelligently forward frames only to the correct port, significantly reducing collisions.
-
-<img width="800" height="450" alt="image" src="https://github.com/user-attachments/assets/432c2fd3-098a-4616-b254-9c06390ad337" />
-
-### Router
-Layer 3 device responsible for forwarding packets across networks, enforcing boundaries, performing NAT, and managing routes.
-
-<img width="800" height="233" alt="image" src="https://github.com/user-attachments/assets/f80b6ad2-1c6b-44dd-87e7-411da775e897" />
+This section briefly distinguishes the three foundational networking devices at Layers 1–3.
 
 ---
 
-# Networking Theory – MAC, IP, DNS, DHCP, DORA
+## Hub (Layer 1)
 
-### MAC Addresses
-A MAC address is a globally unique 48-bit identifier consisting of a manufacturer prefix (OUI) and a device-specific suffix.
+- Operates as a repeater  
+- Forwards incoming signals to all ports  
+- No awareness of MAC addresses  
+- Large collision domains  
 
-<img width="800" height="674" alt="image" src="https://github.com/user-attachments/assets/ec6a6d58-5d62-42b7-a4ae-fa7c8223d502" />
+<img src="https://githubusercontent/assets/9c50db83-cfbc-4a14-83c2-a11b9a5d13b8">
 
-### IP Addresses
-An IPv4 address contains a network portion and a host portion, defined by the subnet mask. This structure enables routing and device identification across networks.
+---
 
-<img width="823" height="402" alt="image" src="https://github.com/user-attachments/assets/86a06bdc-9ab9-4bb2-9cb1-c161bc1ba8e8" />
+## Switch (Layer 2)
 
-### DNS Overview
-DNS resolves domain names (like google.com) into IP addresses. Without DNS, users would be manually typing numerical IPv4 addresses into every service they access.
+- Learns MAC addresses  
+- Forwards frames intelligently  
+- Reduces collisions  
+- Backbone of modern LANs  
 
-### DHCP Overview
-DHCP dynamically assigns IP addressing information to clients—IP, subnet mask, router, DNS—and maintains timed leases.  
-[Insert Screenshot – DHCP lease info]
+<img src="https://githubusercontent/assets/432c2fd3-098a-4616-b254-9c06390ad337">
 
-### DORA Process
-Discover → Offer → Request → Acknowledge  
-This is the four-step handshake a DHCP client uses to obtain an address.  
-[Insert Screenshot – DHCP client request]
+---
+
+## Router (Layer 3)
+
+- Makes forwarding decisions using IP  
+- Routes between networks  
+- Often handles NAT, ACLs, and firewall tasks  
+
+<img src="https://githubusercontent/assets/f80b6ad2-1c6b-44dd-87e7-411da775e897">
+
+---
+
+# Networking Theory
+
+## MAC Addressing
+
+48-bit globally unique identifier. First half: manufacturer OUI. Second half: interface-specific value.
+
+<img src="https://githubusercontent/assets/ec6a6d58-5d62-42b7-a4ae-fa7c8223d502">
+
+---
+
+## IP Addressing
+
+IPv4 consists of network + host portions defined by the subnet mask.
+
+<img src="https://githubusercontent/assets/86a06bdc-9ab9-4bb2-9cb1-c161bc1ba8e8">
+
+---
+
+## DNS
+
+Translates human-readable domains into IP addresses. Critical for navigation on internal and external networks.
+
+---
+
+## DHCP
+
+Dynamically provides addressing and routing configuration.  
+[Insert Screenshot – DHCP Lease Info]
+
+---
+
+## DORA (Discover → Offer → Request → Acknowledge)
+
+The handshake used for DHCP address acquisition.  
+[Insert Screenshot – DHCP Client Request]
+
+---
+
+# Real-World Applications
+
+The commands and concepts in this document are fundamental tools for:
+
+- Diagnosing addressing conflicts across VLANs  
+- Validating DHCP relay behavior  
+- Investigating ARP poisoning or unexpected MAC mappings  
+- Debugging asymmetric routing  
+- Inspecting DNS failures or misconfigured resolvers  
+- Confirming host reachability during outages  
+- Auditing interface states and link-layer connectivity  
+- Understanding virtualization network modes and their side effects  
+
+Professionals across IT support, systems administration, networking, and SOC analysis rely on these exact workflows daily.  
+While simple at first glance, these commands reveal precisely how machines participate in modern networks—and where things break when they don’t.
 
