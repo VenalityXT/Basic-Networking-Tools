@@ -242,9 +242,7 @@ Confirms:
 - No hijacking or redirection  
 
 # Ubuntu Networking Core Commands
-> These commands offer the Linux equivalent views into interface status, routing behavior, DNS resolution, and DHCP negotiation.
-
-Ubuntu provides similar networking tools to Windows, but uses Linux-native commands that reveal the same underlying network behavior from a different perspective.
+> These commands offer the Linux equivalent views into interface status, routing behavior, DNS resolution, and DHCP negotiation. Ubuntu provides similar networking tools to Windows, but uses Linux-native commands that reveal the same underlying network behavior from a different perspective.
 
 ### Interface Listing (ifconfig)  
 ```  
@@ -491,6 +489,7 @@ These tools are used constantly in enterprise networking work:
 This command set represents the **baseline operational toolkit** for system administration, enterprise networking, and Tier 1/2 SOC analysis.
 
 ---
+
 
 
 
