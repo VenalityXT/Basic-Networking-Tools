@@ -260,7 +260,7 @@ Shows all active network interfaces, including IPv4, IPv6, MAC addresses, link s
 ping -c 4 8.8.8.8  
 ```  
 
-<img width="661" height="227" alt="ubuntu ping" src="https://github.com/user-attachments/assets/384398a3-345a-489e-8c2-462878433a1b" />
+<img width="664" height="235" alt="Ubuntu_Ping" src="https://github.com/user-attachments/assets/cc8a2120-4b51-4563-9f24-2494c76dc2ce" />
 
 Tests reachability to an external host, showing latency, stability, and packet loss.
 
@@ -489,6 +489,7 @@ These tools are used constantly in enterprise networking work:
 This command set represents the **baseline operational toolkit** for system administration, enterprise networking, and Tier 1/2 SOC analysis.
 
 ---
+
 
 
 
