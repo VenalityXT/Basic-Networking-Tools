@@ -243,92 +243,105 @@ Confirms:
 - DNS resolution working  
 - No hijacking or redirection  
 
----
-
 # Ubuntu Networking Core Commands
 
-## Interface Listing
-
-```  
+### Interface Listing (ifconfig)  
+X  
 ifconfig  
-```
+X  
 
 <img width="859" height="629" alt="ubuntu ifconfig" src="https://github.com/user-attachments/assets/0ded335b-0055-46c2-b4fa-62f7be68c5fb" />
 
+Shows all active network interfaces, including IPv4, IPv6, MAC addresses, link status, and packet statistics.
+
 ---
 
-## Connectivity Tests (Linux)
-
-```  
+### Connectivity Test (ping)  
+X  
 ping -c 4 8.8.8.8  
-```
+X  
 
-<img width="661" height="227" alt="ubuntu ping" src="https://github.com/user-attachments/assets/384398a3-345a-489e-8c2d-462878433a1b" />
+<img width="661" height="227" alt="ubuntu ping" src="https://github.com/user-attachments/assets/384398a3-345a-489e-8c2-462878433a1b" />
+
+Tests reachability to an external host, showing latency, stability, and packet loss.
 
 ---
 
-## Route Tracing (Linux)
-
-```  
+### Route Tracing (traceroute)  
+X  
 traceroute 8.8.8.8  
-```
+X  
 
 <img width="673" height="732" alt="ubuntu traceroute" src="https://github.com/user-attachments/assets/9efaa038-0924-4030-8661-6adfbd4aa7fd" />
 
+Displays each router hop between your system and the destination, helping identify routing paths and delays.
+
 ---
 
-## ARP Table (Linux)
-
-```  
+### ARP Table (arp -a)  
+X  
 arp -a  
-```
+X  
 
 <img width="586" height="50" alt="ubuntu arp" src="https://github.com/user-attachments/assets/84739b30-c203-4d20-a3f4-5026c22a8ffb" />
+
+Lists the IPv4 to MAC address mappings learned on the local network.
 
 ---
 
 # Additional Ubuntu Tasks
 
-## MAC Address
-
-```  
+### MAC Address (ip link)  
+X  
 ip link  
-```
+X  
 
 <img width="1152" height="146" alt="ubuntu ip link" src="https://github.com/user-attachments/assets/25b05bf4-0522-410e-8250-7b9ac3fff7ff" />
 
+Shows interface names, MAC addresses, and link states.
+
 ---
 
-## IP Address
-
-```  
+### IP Address Assignment (ip addr show)  
+X  
 ip addr show  
-```
+X  
 
 <img width="1019" height="432" alt="ubuntu ip addr show" src="https://github.com/user-attachments/assets/a9d57c03-f448-45d1-b17e-1c3a107113a3" />
 
+Displays all IPv4 and IPv6 addresses assigned to each interface.
+
 ---
 
-## DHCP Verification (nmcli)
+### DHCP Verification (nmcli)
 
 <img width="912" height="923" alt="ubuntu nmcli device show" src="https://github.com/user-attachments/assets/2d667bf5-1bb2-46fa-9022-e2a7464eea40" />
 
-Reveals:
+This output confirms:
 
-- DHCP server  
-- Lease time  
-- DNS servers  
-- Address source  
+- Which DHCP server issued the lease  
+- The assigned IPv4 address and mask  
+- DNS servers provided by DHCP  
+- Lease start and expiration times  
+- Whether the assignment is dynamic or static  
+
+This is one of the most complete ways to view DHCP info on Ubuntu.
 
 ---
 
-## DHCP Client Request
-
-```  
+### DHCP Client Request (dhclient -v)  
+X  
 sudo dhclient -v  
-```
+X  
 
-> Shows the full DORA process in real time.
+Running the DHCP client in verbose mode shows the entire DORA exchange in real time:
+
+- Sending Discover  
+- Receiving Offer  
+- Sending Request  
+- Receiving Acknowledgment  
+
+This is the go to command when a Linux host will not pull an address or when you need to verify exactly which DHCP server is responding.
 
 ---
 
@@ -477,14 +490,3 @@ These tools are used constantly in enterprise networking work:
 This command set represents the **baseline operational toolkit** for system administration, enterprise networking, and Tier 1/2 SOC analysis.
 
 ---
-
-
-
-
-
-
-
-
-
-
-
