@@ -1,4 +1,4 @@
-# Basic Networking Command List  
+![TestMAC drawio](https://github.com/user-attachments/assets/6398f2a1-18d3-4247-b4ff-80da533a202e)# Basic Networking Command List  
 ### Cross-Platform Analysis of Windows & Ubuntu Networking Tools
 
 This document provides a structured walkthrough of essential networking utilities across **Windows** and **Ubuntu Linux**, blending practical command output with focused analysis of how each tool reveals the behavior of the underlying network stack. The goal is not just to *run* these commands, but to interpret what they show—addressing, routing, ARP resolution, DNS behavior, DHCP negotiation, and how virtualized environments impact all of it.
@@ -419,6 +419,7 @@ These tools are used constantly in enterprise networking work:
 This command set represents the **baseline operational toolkit** for system administration, enterprise networking, and Tier 1/2 SOC analysis.
 
 ---
+
 
 
 
