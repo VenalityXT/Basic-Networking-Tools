@@ -364,7 +364,7 @@ sudo dhclient -v
 
 > 48-bit burned-in hardware identifier.
 
-![TestMAC drawio](https://github.com/user-attachments/assets/6398f2a1-18d3-4247-b4ff-80da533a202e)
+![MAC drawio](https://github.com/user-attachments/assets/a4f43230-9832-4fc3-9d3e-10c051c4c45e)
 
 ---
 
@@ -372,7 +372,7 @@ sudo dhclient -v
 
 > Divided into **network** and **host** sections using the subnet mask.
 
-![TestIP drawio](https://github.com/user-attachments/assets/f957f9cc-3fab-42ec-b823-cc83143a1545)
+![IP drawio](https://github.com/user-attachments/assets/bd15cd8d-9f64-42e5-8f1f-77f643aeea41)
 
 ---
 
@@ -419,6 +419,7 @@ These tools are used constantly in enterprise networking work:
 This command set represents the **baseline operational toolkit** for system administration, enterprise networking, and Tier 1/2 SOC analysis.
 
 ---
+
 
 
 
